@@ -54,5 +54,6 @@
 #' @importFrom rlang .data
 #' @importFrom httr GET authenticate add_headers timeout content headers status_code
 #' @importFrom jsonlite fromJSON
+#' @importFrom graphics barplot hist plot
 ## usethis namespace: end
 NULL

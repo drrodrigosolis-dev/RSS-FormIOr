@@ -23,3 +23,7 @@ Imports:
     tibble,
     tidyr,
     utils
+Suggests:
+    testthat (>= 3.0.0),
+    wordcloud
+Config/testthat/edition: 3

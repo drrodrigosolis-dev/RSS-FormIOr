@@ -3,3 +3,4 @@
 ^FormIOr\.Rproj$
 ^LICENSE\.md$
 ^data-raw$
+^audit_log\.csv$
