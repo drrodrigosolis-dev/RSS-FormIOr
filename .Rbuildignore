@@ -9,7 +9,10 @@ workflow_plan\.json$
 ^formior_.*$
 ^.*\.Rcheck$
 ^.*\.tar\.gz$
-^\\.DS_Store$
+\\.DS_Store$
 ^\\.Rhistory$
 ^\\.git$
 ^\\.gitignore$
+^FormIOr_output\\.xlsx$
+^handbook_site$
+^cran-comments\.md$

@@ -1,10 +1,9 @@
 Package: FormIOr
 Title: Download, Clean, and Export FormIO Submissions
-Version: 0.0.0.9000
-Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Author: First Last [aut, cre]
-Maintainer: First Last <first.last@example.com>
+Version: 1.0.0
+Authors@R:
+    person("Rodrigo", "Solis Sosa", email = "dr.rodrigo.solis@gmail.com",
+           role = c("aut", "cre"))
 Description: Tools for downloading FormIO submissions (responses), flattening
     nested structures, cleaning and simplifying repeated and multi-select
     answers, generating diagnostics (codebooks, summaries, plots), maintaining
@@ -12,6 +11,8 @@ Description: Tools for downloading FormIO submissions (responses), flattening
     delimited files. Includes an interactive end-to-end workflow for
     non-technical users.
 License: MIT + file LICENSE
+URL: https://github.com/ORG/FormIOr
+BugReports: https://github.com/ORG/FormIOr/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
