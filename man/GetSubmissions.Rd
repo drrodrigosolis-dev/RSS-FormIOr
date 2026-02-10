@@ -8,8 +8,8 @@ GetSubmissions(
   base_url = "https://submit.digital.gov.bc.ca/app/api/v1",
   form_id = NULL,
   api_key = NULL,
-  content.only = T,
-  reenter.credentials = F,
+  content.only = TRUE,
+  reenter.credentials = FALSE,
   AdditionalCols = c("")
 )
 }
@@ -42,4 +42,17 @@ GetSubmissions(
 \description{
 Fetches a list of submission metadata (not the full submission data) from a
 Digital.gov.bc.ca form, including drafts, completed, and deleted submissions.
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
 }
+\section{CHEF credentials and base URL}{
+
+FormIOr is designed for the BC Public Service CHEF FormIO service.
+The default base URL is \verb{https://submit.digital.gov.bc.ca/app/api/v1}.
+If you use a different FormIO service, you must override \code{base_url} and
+compatibility is not guaranteed.
+
+For CHEF users, generate your API key from the form's \strong{Manage} page.
+The Form ID is the final alphanumeric code after the \code{=} sign in the
+Manage page URL.
+}
+

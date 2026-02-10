@@ -30,6 +30,45 @@ expect_equal(res$data$check1[res$data$submissionId == "a"], 1)
 })
 
 
+test_that("ResolveRepeats handles groups that are all NA", {
+	df <- data.frame(
+		submissionId = c("a", "a", "b"),
+		comment = c(NA, NA, "ok"),
+		stringsAsFactors = FALSE
+	)
+
+	res <- ResolveRepeats(df, id_col = "submissionId")
+	expect_equal(nrow(res$data), 2)
+	expect_true(is.na(res$data$comment[res$data$submissionId == "a"]))
+	expect_equal(res$data$comment[res$data$submissionId == "b"], "ok")
+})
+
+
+test_that("ResolveRepeats handles list columns by converting to text", {
+	df <- data.frame(
+		submissionId = c("a", "a", "b"),
+		stringsAsFactors = FALSE
+	)
+	df$payload <- I(list(list(x = 1), list(x = 1), list(x = 2)))
+
+	res <- ResolveRepeats(df, id_col = "submissionId")
+	expect_equal(nrow(res$data), 2)
+	expect_true(is.character(res$data$payload))
+})
+
+test_that("ResolveRepeats handles data.frame columns by converting to text", {
+	df <- data.frame(
+		submissionId = c("a", "a", "b"),
+		stringsAsFactors = FALSE
+	)
+	df$nested <- tibble::tibble(x = c(1, 1, 2), y = c("u", "u", "v"))
+
+	expect_warning(res <- ResolveRepeats(df, id_col = "submissionId"), NA)
+	expect_equal(nrow(res$data), 2)
+	expect_true(is.character(res$data$nested))
+})
+
+
 test_that("DeduplicateSubmissions keeps last by time column", {
 	df <- data.frame(
 		submissionId = c("a", "a", "b"),

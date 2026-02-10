@@ -1,6 +1,7 @@
 #' Add Hierarchical Sections to FormIO Response Columns
 #'
 #' This interactive function guides the user through categorizing columns of a flattened FormIO response dataset into hierarchical sections (up to 3 levels deep). It is designed to facilitate easier analysis by adding grouping variables to columns. The function handles input that may be a data frame, a list from \code{FlattenSubmissions()}, or raw output from \code{GetResponses()}.
+#' If audit logging is active (see [StartAuditLog()]), this action is recorded.
 #'
 #' @param x A data frame (possibly with nested list-columns), or a list containing \code{FlatResponses} (a flattened data frame) or \code{submission_data} (from \code{GetResponses()} with \code{content.only = FALSE}).
 #'
@@ -33,6 +34,10 @@
 #'
 #'
 AddSections <- function(x) {
+	audit_depth <- audit_enter()
+	on.exit(audit_exit(), add = TRUE)
+	if (audit_depth == 1) maybe_prompt_audit_log()
+
 	# Improved input handling
 	if (inherits(x, "data.frame")) {
 		Data <- x
@@ -66,6 +71,10 @@ AddSections <- function(x) {
 	Sections <- askingSections(DepthAsked = Depth)
 	Output <- assignSections(Sections = Sections, df = CtrlDF)
 	Data <- list(FlatResponses = Data, Sections = Output)
+
+	if (audit_depth == 1) {
+		maybe_write_audit("AddSections", data = Data$FlatResponses)
+	}
 
 	return(Data)
 }
@@ -174,5 +183,3 @@ get_numbers <- function(prompt = "Enter numbers (comma-separated, ranges with : 
 
 	return(result)
 }
-
-

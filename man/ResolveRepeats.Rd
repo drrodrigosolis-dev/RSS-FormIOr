@@ -44,6 +44,13 @@ Automatically collapses repeated values within each submission ID using a
 consistent strategy (or simple heuristics when \code{strategy = "auto"}).
 This is a non-interactive alternative to \code{\link[=FixDups]{FixDups()}}.
 }
+\details{
+Note: some FormIO components (for example uploads or address blocks) can
+produce list-columns or nested data-frame columns even after flattening.
+These values are converted to readable JSON/text before collapsing so the
+output remains stable and export-friendly.
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
+}
 \examples{
 \dontrun{
 flat <- FlattenSubmissions(GetResponses(form_id = "123", api_key = "abc"))

@@ -51,6 +51,7 @@ A list with:
 \description{
 When a question generates multiple TRUE/FALSE columns (e.g., select boxes),
 this function combines them into a single comma-separated column.
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
 }
 \examples{
 \dontrun{

@@ -42,7 +42,7 @@ PlotBarSummary(
 Invisibly returns a list with the field name and bar data.
 }
 \description{
-Plot a bar chart for a categorical field
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
 }
 \examples{
 \dontrun{

@@ -1,64 +1,60 @@
-
-
-#' Title
-#' @param base_url URL where the form is stored. for the Gov't of BC, the URL is "https://submit.digital.gov.bc.ca/app/api/v1"(default)
-#' @param form_id if left  (Default), and credentials have not been entered, it will run AskCredentials() to obtain the information. You can find your Form's ID by going to your Form Settings page, and copying it from the URL (after the "=" sign in the URL)
-#' @param api_key if left  (Default), and credentials have not been entered, it will run AskCredentials() to obtain the information. You can generate an API for the specific form from the "Manage Form" page
-#' @param reenter.credentials Default as FALSE. if TRUE, it will ask you to reenter the Form ID and API KEY, regardless if they already exist in the system
+#' Retrieve form metadata (name, versions, settings)
+#'
+#' Downloads basic metadata for a FormIO form. This can be useful for:
+#'
+#' - confirming you have the right form (title/name/version)
+#' - naming output folders (the wizard uses the form title when it can)
+#' - understanding version history (useful before comparing versions)
+#'
+#' Note: this returns *metadata only*, not the full form schema/components. If
+#' you want a field list and labels, use [DescribeForm()] or [FieldDictionary()]
+#' (those functions can use the metadata to fetch the schema when credentials
+#' are available).
+#'
+#' @param base_url API base URL. Default `"https://submit.digital.gov.bc.ca/app/api/v1"`.
+#' @param form_id Form ID. If `NULL`, credentials are read from [AskCredentials()].
+#' @param api_key API key/secret. If `NULL`, credentials are read from [AskCredentials()].
+#' @param reenter.credentials Logical. If `TRUE`, forces re-entry of credentials.
 #'
 #' @details
-#' #' @details
-#' The function returns a hierarchical named list representing the full survey
-#' form configuration. Top-level elements include scalar metadata fields such as
-#' the form name, description, identifiers, and feature flags. Nested sublists
-#' encode structured configuration blocks (e.g., scheduling rules and event
-#' stream configuration), and selected components (e.g., versions and identity
-#' providers) are returned as data frames. The structure closely mirrors the
-#' original JSON response from the API while using native R data types.
-
-#' @returns
-#' A named, hierarchical list representing the configuration and metadata of a
-#' survey form. The list contains a mix of scalar elements (character, logical,
-#' and numeric), nested sublists, and embedded data frames. Top-level elements
-#' include form metadata (e.g., name, description, identifiers, deployment
-#' settings), feature flags, and ownership information. Nested components
-#' describe structured configuration domains such as scheduling rules
-#' (`schedule`), external metadata (`formMetadata`), and event streaming
-#' configuration (`eventStreamConfig`). Version history and identity provider
-#' information are returned as data frames within the list. The structure
-#' mirrors the hierarchical JSON schema returned by the underlying API while
-#' using native R data types for programmatic access.
-
+#' If audit logging is active (see [StartAuditLog()]), this action is recorded.
+#'
+#' This function returns its result using `invisible()`. Assign it to a variable
+#' to inspect it.
+#'
+#' @return A named list (structure depends on the API) that typically includes
+#' form identifiers, configuration fields, and a `versions` table.
+#'
 #' @export
 #'
 #' @examples
-#' #'#' \dontrun{ GetFormMetadata(form_id = form_id, api_key = api_key)}
-#'
-#'
+#' \dontrun{
+#' meta <- GetFormMetadata(form_id = "your-form-id", api_key = "your-api-key")
+#' meta$title
+#' str(meta$versions)
+#' }
 GetFormMetadata<-function(base_url = "https://submit.digital.gov.bc.ca/app/api/v1",
 												 form_id = NULL, api_key = NULL,
-												  reenter.credentials = F) {
+												  reenter.credentials = FALSE) {
+	audit_depth <- audit_enter()
+	on.exit(audit_exit(), add = TRUE)
+	if (audit_depth == 1) maybe_prompt_audit_log()
 
-	if (reenter.credentials == T) {
-		Form_Info <- c()
-		Form_Info <- AskCredentials()
-	}
-
-	if (exists(".Form_Info")) {
-		Form_Info <- .Form_Info
-	}
-	if (!exists(".Form_Info")) {
-		Form_Info <- c()
-		Form_Info <- AskCredentials()
-	}
-
-	.Form_Info <<- Form_Info
-	form_id <- ifelse(is.null(form_id), Form_Info[1], form_id)
-	api_key <- ifelse(is.null(api_key), Form_Info[2], api_key)
+	creds <- resolve_credentials(
+		form_id = form_id,
+		api_key = api_key,
+		reenter.credentials = reenter.credentials
+	)
+	form_id <- creds$form_id
+	api_key <- creds$api_key
 
 	versionRelation<-fromJSON(content(as='text',GET(
 		url = paste0(base_url, "/forms/", form_id),
 		query = list(formID=form_id), authenticate(user = form_id, password = api_key, type = "basic"), add_headers(Accept = "application/json"),timeout(60)  )))
+
+	if (audit_depth == 1) {
+		maybe_write_audit("GetFormMetadata", details = "Form metadata fetched")
+	}
 
 	return(invisible(versionRelation))
 

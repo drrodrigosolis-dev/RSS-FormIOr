@@ -2,6 +2,7 @@
 #'
 #' This is a simple overview of a form: the name, version, and how many fields
 #' it contains. It is meant for non-technical users who want a quick summary.
+#' If audit logging is active (see [StartAuditLog()]), this action is recorded.
 #'
 #' What you can pass to `form`:
 #' - A **schema list** (from a schema API response)
@@ -61,6 +62,10 @@ DescribeForm <- function(
 		include = c("input", "all"),
 		quiet = FALSE
 ) {
+	audit_depth <- audit_enter()
+	on.exit(audit_exit(), add = TRUE)
+	if (audit_depth == 1) maybe_prompt_audit_log()
+
 	include <- match.arg(include)
 	form <- as_form_schema(form, version = version)
 
@@ -102,6 +107,10 @@ DescribeForm <- function(
 		message("Form ", form_name, " has ", counts$fields, " field(s) across ", counts$sections, " section(s).")
 	}
 
+	if (audit_depth == 1) {
+		maybe_write_audit("DescribeForm", details = paste0("version=", meta$version))
+	}
+
 	out
 }
 
@@ -110,6 +119,7 @@ DescribeForm <- function(
 #'
 #' This creates a clean table that lists each field in your form. It is meant
 #' to be easy to read and share with non-technical staff.
+#' If audit logging is active (see [StartAuditLog()]), this action is recorded.
 #'
 #' If you pass the output of [GetFormMetadata()], the schema is **not** included
 #' in that object. In that case the function will automatically fetch the schema
@@ -161,6 +171,10 @@ FieldDictionary <- function(
 		version = "latest",
 		quiet = FALSE
 ) {
+	audit_depth <- audit_enter()
+	on.exit(audit_exit(), add = TRUE)
+	if (audit_depth == 1) maybe_prompt_audit_log()
+
 	include <- match.arg(include)
 	form <- as_form_schema(form, version = version)
 
@@ -189,6 +203,10 @@ FieldDictionary <- function(
 		message("Found ", nrow(rows), " field(s).")
 	}
 
+	if (audit_depth == 1) {
+		maybe_write_audit("FieldDictionary", data = rows, details = paste0("include=", include))
+	}
+
 	rows
 }
 
@@ -197,6 +215,7 @@ FieldDictionary <- function(
 #'
 #' Shows what changed between two form versions:
 #' fields added, removed, or updated.
+#' If audit logging is active (see [StartAuditLog()]), this action is recorded.
 #'
 #' If you pass the output of [GetFormMetadata()], the schema is **not** included
 #' in that object. In that case the function will automatically fetch the schema
@@ -257,6 +276,10 @@ CompareFormVersions <- function(
 		include_unchanged = FALSE,
 		quiet = FALSE
 ) {
+	audit_depth <- audit_enter()
+	on.exit(audit_exit(), add = TRUE)
+	if (audit_depth == 1) maybe_prompt_audit_log()
+
 	by <- match.arg(by)
 	include <- match.arg(include)
 
@@ -339,6 +362,10 @@ CompareFormVersions <- function(
 
 	if (!quiet) {
 		message("Added: ", nrow(added), ", removed: ", nrow(removed), ", changed: ", nrow(changed), ".")
+	}
+
+	if (audit_depth == 1) {
+		maybe_write_audit("CompareFormVersions", details = paste0("by=", by, "; include=", include))
 	}
 
 	out
@@ -684,22 +711,34 @@ resolve_version_id <- function(form, version = "latest") {
 resolve_credentials <- function(form_id = NULL, api_key = NULL, reenter.credentials = FALSE) {
 	Form_Info <- NULL
 
+	stored <- .formior_state$Form_Info
+	has_stored <- !is.null(stored) &&
+		length(stored) >= 2 &&
+		nzchar(as.character(stored[[1]])) &&
+		nzchar(as.character(stored[[2]]))
+
 	if (reenter.credentials) {
 		Form_Info <- AskCredentials()
-	} else if (exists(".Form_Info")) {
-		Form_Info <- .Form_Info
-	} else if (interactive()) {
+	} else if (has_stored) {
+		Form_Info <- stored
+	} else if (interactive() && (is.null(form_id) || is.null(api_key) || !nzchar(form_id) || !nzchar(api_key))) {
 		Form_Info <- AskCredentials()
 	}
 
-	if (is.null(form_id) && !is.null(Form_Info)) form_id <- Form_Info[1]
-	if (is.null(api_key) && !is.null(Form_Info)) api_key <- Form_Info[2]
-
-	if (is.null(form_id) || is.null(api_key) || form_id == "" || api_key == "") {
-		stop("Form ID or API key not available. Run AskCredentials() or pass a schema list instead.")
+	if ((is.null(form_id) || !nzchar(form_id)) && !is.null(Form_Info)) {
+		form_id <- Form_Info[["ID"]] %||% Form_Info[1]
+	}
+	if ((is.null(api_key) || !nzchar(api_key)) && !is.null(Form_Info)) {
+		api_key <- Form_Info[["Key"]] %||% Form_Info[2]
 	}
 
-	.Form_Info <<- Form_Info
+	if (is.null(form_id) || is.null(api_key) || !nzchar(form_id) || !nzchar(api_key)) {
+		stop("Form ID or API key not available. Run AskCredentials() or pass form_id and api_key.")
+	}
+
+	# Store the resolved credentials for the current R session so subsequent calls
+	# do not re-prompt.
+	.formior_state$Form_Info <- c(ID = form_id, Key = api_key)
 	list(form_id = form_id, api_key = api_key)
 }
 

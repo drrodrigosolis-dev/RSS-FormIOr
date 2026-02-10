@@ -16,6 +16,7 @@ A list with two elements:
 }
 \description{
 This interactive function guides the user through categorizing columns of a flattened FormIO response dataset into hierarchical sections (up to 3 levels deep). It is designed to facilitate easier analysis by adding grouping variables to columns. The function handles input that may be a data frame, a list from \code{FlattenSubmissions()}, or raw output from \code{GetResponses()}.
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
 }
 \details{
 The function first extracts or flattens the input to obtain a flat data frame of responses. It then prompts the user to:

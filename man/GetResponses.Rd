@@ -2,40 +2,83 @@
 % Please edit documentation in R/GetRespones.R
 \name{GetResponses}
 \alias{GetResponses}
-\title{Get Responses submitted to a FormIO Form}
+\title{Download responses from a FormIO form}
 \usage{
 GetResponses(
   base_url = "https://submit.digital.gov.bc.ca/app/api/v1",
   form_id = NULL,
   api_key = NULL,
-  drafts = F,
-  deleted = F,
-  content.only = T,
-  reenter.credentials = F
+  drafts = FALSE,
+  deleted = FALSE,
+  content.only = TRUE,
+  reenter.credentials = FALSE
 )
 }
 \arguments{
-\item{base_url}{URL where the form is stored. for the Gov't of BC, the URL is "https://submit.digital.gov.bc.ca/app/api/v1"(default)}
+\item{base_url}{Character. API base URL. Default:
+\code{"https://submit.digital.gov.bc.ca/app/api/v1"}.}
 
-\item{form_id}{if left  (Default), and credentials have not been entered, it will run AskCredentials() to obtain the information. You can find your Form's ID by going to your Form Settings page, and copying it from the URL (after the "=" sign in the URL)}
+\item{form_id}{Character. Form ID. If \code{NULL}, uses stored credentials or
+prompts via \code{\link[=AskCredentials]{AskCredentials()}}.}
 
-\item{api_key}{if left  (Default), and credentials have not been entered, it will run AskCredentials() to obtain the information. You can generate an API for the specific form from the "Manage Form" page}
+\item{api_key}{Character. API key/secret. If \code{NULL}, uses stored credentials
+or prompts via \code{\link[=AskCredentials]{AskCredentials()}}.}
 
-\item{drafts}{Default FALSE, set to TRUE to download forms in draft}
+\item{drafts}{Logical. Include draft submissions? Default \code{FALSE}.}
 
-\item{deleted}{Default FALSE, set to TRUE to download deleted forms}
+\item{deleted}{Logical. Include deleted submissions? Default \code{FALSE}.}
 
-\item{content.only}{Default TRUE. if F, returns a list with the submission data, content type, content disposition, and API status. If FALSE, it will only return the submission data as a data frame.}
+\item{content.only}{Logical or character.
+\itemize{
+\item \code{TRUE} (default): return the submissions as a data frame/list
+\item \code{FALSE}: return a list with status, headers, and the parsed content
+\item \code{"raw"}: return the raw JSON response as text
+}}
 
-\item{reenter.credentials}{Default as FALSE. if TRUE, it will ask you to reenter the Form ID and API KEY, regardless if they already exist in the system}
+\item{reenter.credentials}{Logical. Force re-entry of credentials (default:
+\code{FALSE}).}
 }
 \value{
-if content.only= FALSE, returns a list with the submission data, content type, content disposition, and API status. IF False, it will only return the submission data as a data frame.
+If \code{content.only = TRUE} (default), returns the parsed submissions
+(typically a data frame).
+If \code{content.only = FALSE}, returns a list with elements \code{status},
+\code{content_type}, \code{content_disposition}, and \code{submission_data}.
+If \code{content.only = "raw"}, returns the raw JSON response as a character
+string.
 }
 \description{
-Get Responses submitted to a FormIO Form
+Retrieves submissions ("responses") for a FormIO form using the export API.
+This is one of the main entry points for getting data into FormIOr.
 }
-\examples{
-#' \dontrun{ GetResponses(form_id = form_id, api_key = api_key, content.only = F)}
+\details{
+Credentials:
+\itemize{
+\item If \code{form_id} and \code{api_key} are \code{NULL}, FormIOr will use previously entered
+credentials from the current R session (stored internally), or prompt via
+\code{\link[=AskCredentials]{AskCredentials()}}.
+}
 
+Audit logging:
+\itemize{
+\item If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), the download action is
+recorded (but your API key is never written to the log).
+}
+}
+\section{CHEF credentials and base URL}{
+
+FormIOr is designed for the BC Public Service CHEF FormIO service.
+The default base URL is \verb{https://submit.digital.gov.bc.ca/app/api/v1}.
+If you use a different FormIO service, you must override \code{base_url} and
+compatibility is not guaranteed.
+
+For CHEF users, generate your API key from the form's \strong{Manage} page.
+The Form ID is the final alphanumeric code after the \code{=} sign in the
+Manage page URL.
+}
+
+\examples{
+\dontrun{
+responses <- GetResponses(form_id = "your-form-id", api_key = "your-api-key")
+flat <- FlattenSubmissions(responses)
+}
 }

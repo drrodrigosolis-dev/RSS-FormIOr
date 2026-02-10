@@ -21,11 +21,10 @@
 #' This function is typically used before [FixDups()] to help non-technical users
 #' identify which columns need special handling (e.g. concatenate, pick first,
 #' sum, pivot wider, etc.).
+#' If audit logging is active (see [StartAuditLog()]), this action is recorded.
 #'
 #' Columns that are constant within each submission will show `1` everywhere
 #' (or `NA` if the column is entirely missing for that submission).
-#'
-#' @return A tibble (or data.frame) matching the structure of `x$FlatResponses`.
 #'
 #' @export
 #'
@@ -47,6 +46,10 @@
 
 
 findMultilines <- function(x, id_col = 1) {
+	audit_depth <- audit_enter()
+	on.exit(audit_exit(), add = TRUE)
+	if (audit_depth == 1) maybe_prompt_audit_log()
+
 	xresp <- x$FlatResponses
 	xDups <- xresp
 	id_sym <- sym(names(xDups)[id_col])
@@ -59,10 +62,12 @@ findMultilines <- function(x, id_col = 1) {
 			ungroup()
 	}
 
+	if (audit_depth == 1) {
+		maybe_write_audit("findMultilines", data = xDups)
+	}
+
 	return(xDups)
 }
-
-
 
 
 

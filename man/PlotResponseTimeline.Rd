@@ -60,6 +60,7 @@ Invisibly returns the output of \code{\link[=ResponseTimeline]{ResponseTimeline(
 \description{
 Convenience wrapper around \code{\link[=ResponseTimeline]{ResponseTimeline()}} that draws a simple line
 chart using base graphics.
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
 }
 \examples{
 \dontrun{

@@ -44,6 +44,7 @@ Invisibly returns a list with the field name(s) and word frequencies.
 \description{
 Requires the optional \code{wordcloud} package. If it is not installed, the
 function will stop with a helpful message.
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
 }
 \examples{
 \dontrun{

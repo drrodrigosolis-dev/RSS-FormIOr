@@ -10,7 +10,10 @@ FixDups(
   id_col = 1,
   ask_threshold = 1.05,
   quiet = FALSE,
-  dry_run = FALSE
+  dry_run = FALSE,
+  strategies = NULL,
+  prompt = TRUE,
+  default_strategy = "concat_comma"
 )
 }
 \arguments{
@@ -30,6 +33,18 @@ Default = 1.05 (catches almost all real multiples while ignoring noise).}
 
 \item{dry_run}{Logical. If \code{TRUE}, shows what would happen without actually
 modifying the data. Default \code{FALSE}.}
+
+\item{strategies}{Optional. A named character vector or a data frame with
+columns \code{column} and \code{strategy}. When provided, FixDups can apply these
+strategies without prompting (useful for repeatable workflows).}
+
+\item{prompt}{Logical. If \code{TRUE} (default), FixDups will prompt you for
+choices when a strategy is not provided. If \code{FALSE}, it will not prompt
+and will use \code{default_strategy} for any missing strategies.}
+
+\item{default_strategy}{Character. Strategy to use when \code{prompt = FALSE}
+and a column needs fixing but no explicit strategy was provided.
+Default \code{"concat_comma"}.}
 }
 \value{
 A list with two components:
@@ -48,6 +63,7 @@ It helps resolve columns that contain multiple values per submission
 Shows a summary of problematic columns first, then asks the user one column
 at a time how to handle each one (concatenate, keep first, sum, count,
 remove the column entirely, etc.).
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
 
 Most strategies reduce the data to one row per submission.
 Choosing "remove" drops the column completely from the output.

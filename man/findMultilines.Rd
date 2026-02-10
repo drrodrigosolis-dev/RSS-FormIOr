@@ -19,8 +19,6 @@ A data frame with the \strong{same dimensions and column names} as
 contains the count of distinct non-NA values in that column for the given
 submission. Counts = 1 indicate constant/single-value fields; counts > 1
 indicate multi-value fields that are likely causing duplicated rows.
-
-A tibble (or data.frame) matching the structure of \code{x$FlatResponses}.
 }
 \description{
 Creates a diagnostic data frame with the same shape as the flattened responses,
@@ -33,6 +31,7 @@ duplication due to repeated sections, multi-select choices, or repeating groups.
 This function is typically used before \code{\link[=FixDups]{FixDups()}} to help non-technical users
 identify which columns need special handling (e.g. concatenate, pick first,
 sum, pivot wider, etc.).
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
 
 Columns that are constant within each submission will show \code{1} everywhere
 (or \code{NA} if the column is entirely missing for that submission).

@@ -53,6 +53,7 @@ A list with:
 \description{
 Shows what changed between two form versions:
 fields added, removed, or updated.
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
 }
 \details{
 If you pass the output of \code{\link[=GetFormMetadata]{GetFormMetadata()}}, the schema is \strong{not} included

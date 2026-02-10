@@ -39,6 +39,7 @@ A list with:
 \description{
 Keeps one row per submission ID, using a timestamp column when available
 (for example \code{created} or \code{modified}), otherwise keeps first/last row.
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
 }
 \examples{
 \dontrun{

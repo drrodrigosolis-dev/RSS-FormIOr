@@ -2,17 +2,36 @@
 % Please edit documentation in R/AskCredentials.R
 \name{AskCredentials}
 \alias{AskCredentials}
-\title{Ask Credentials}
+\title{Enter FormIO credentials}
 \usage{
 AskCredentials()
 }
 \value{
-Vector of 2
+A named character vector of length 2: \code{ID} and \code{Key}.
 }
 \description{
-Function to get the credentials that will be used to access the Form's API. Generally this function will be called from within GetResponses()
+Prompts for the Form ID and API key used to access the FormIO API.
+This is usually called automatically by \code{\link[=GetResponses]{GetResponses()}} and related
+functions when credentials are not already stored.
 }
-\examples{
-AskCredentials()
+\details{
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), the action is recorded,
+but the credentials themselves are \strong{not} written to the log.
+}
+\section{CHEF credentials and base URL}{
 
+FormIOr is designed for the BC Public Service CHEF FormIO service.
+The default base URL is \verb{https://submit.digital.gov.bc.ca/app/api/v1}.
+If you use a different FormIO service, you must override \code{base_url} in
+\code{\link[=GetResponses]{GetResponses()}} / \code{\link[=GetSubmissions]{GetSubmissions()}}, and compatibility is not guaranteed.
+
+For CHEF users, generate your API key from the form's \strong{Manage} page.
+The Form ID is the final alphanumeric code after the \code{=} sign in the
+Manage page URL.
+}
+
+\examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+AskCredentials()
+\dontshow{\}) # examplesIf}
 }

@@ -5,3 +5,9 @@
 .httr-oauth
 .DS_Store
 .quarto
+audit_log.csv
+workflow_plan.rds
+workflow_plan.json
+formior_*/
+*.Rcheck/
+*.tar.gz

@@ -4,9 +4,9 @@
 \name{FormIOr-package}
 \alias{FormIOr}
 \alias{FormIOr-package}
-\title{FormIOr: What the Package Does (One Line, Title Case)}
+\title{FormIOr: Download, Clean, and Export FormIO Submissions}
 \description{
-What the package does (one paragraph).
+Tools for downloading FormIO submissions (responses), flattening nested structures, cleaning and simplifying repeated and multi-select answers, generating diagnostics (codebooks, summaries, plots), maintaining audit logs of dataset processing, and exporting results to Excel or delimited files. Includes an interactive end-to-end workflow for non-technical users.
 }
 \author{
 \strong{Maintainer}: First Last \email{first.last@example.com}

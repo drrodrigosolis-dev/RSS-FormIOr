@@ -2,52 +2,52 @@
 % Please edit documentation in R/GetFormMetadata.R
 \name{GetFormMetadata}
 \alias{GetFormMetadata}
-\title{Title}
+\title{Retrieve form metadata (name, versions, settings)}
 \usage{
 GetFormMetadata(
   base_url = "https://submit.digital.gov.bc.ca/app/api/v1",
   form_id = NULL,
   api_key = NULL,
-  reenter.credentials = F
+  reenter.credentials = FALSE
 )
 }
 \arguments{
-\item{base_url}{URL where the form is stored. for the Gov't of BC, the URL is "https://submit.digital.gov.bc.ca/app/api/v1"(default)}
+\item{base_url}{API base URL. Default \code{"https://submit.digital.gov.bc.ca/app/api/v1"}.}
 
-\item{form_id}{if left  (Default), and credentials have not been entered, it will run AskCredentials() to obtain the information. You can find your Form's ID by going to your Form Settings page, and copying it from the URL (after the "=" sign in the URL)}
+\item{form_id}{Form ID. If \code{NULL}, credentials are read from \code{\link[=AskCredentials]{AskCredentials()}}.}
 
-\item{api_key}{if left  (Default), and credentials have not been entered, it will run AskCredentials() to obtain the information. You can generate an API for the specific form from the "Manage Form" page}
+\item{api_key}{API key/secret. If \code{NULL}, credentials are read from \code{\link[=AskCredentials]{AskCredentials()}}.}
 
-\item{reenter.credentials}{Default as FALSE. if TRUE, it will ask you to reenter the Form ID and API KEY, regardless if they already exist in the system}
+\item{reenter.credentials}{Logical. If \code{TRUE}, forces re-entry of credentials.}
 }
 \value{
-A named, hierarchical list representing the configuration and metadata of a
-survey form. The list contains a mix of scalar elements (character, logical,
-and numeric), nested sublists, and embedded data frames. Top-level elements
-include form metadata (e.g., name, description, identifiers, deployment
-settings), feature flags, and ownership information. Nested components
-describe structured configuration domains such as scheduling rules
-(\code{schedule}), external metadata (\code{formMetadata}), and event streaming
-configuration (\code{eventStreamConfig}). Version history and identity provider
-information are returned as data frames within the list. The structure
-mirrors the hierarchical JSON schema returned by the underlying API while
-using native R data types for programmatic access.
+A named list (structure depends on the API) that typically includes
+form identifiers, configuration fields, and a \code{versions} table.
 }
 \description{
-Title
+Downloads basic metadata for a FormIO form. This can be useful for:
 }
 \details{
-#' @details
-The function returns a hierarchical named list representing the full survey
-form configuration. Top-level elements include scalar metadata fields such as
-the form name, description, identifiers, and feature flags. Nested sublists
-encode structured configuration blocks (e.g., scheduling rules and event
-stream configuration), and selected components (e.g., versions and identity
-providers) are returned as data frames. The structure closely mirrors the
-original JSON response from the API while using native R data types.
+\itemize{
+\item confirming you have the right form (title/name/version)
+\item naming output folders (the wizard uses the form title when it can)
+\item understanding version history (useful before comparing versions)
+}
+
+Note: this returns \emph{metadata only}, not the full form schema/components. If
+you want a field list and labels, use \code{\link[=DescribeForm]{DescribeForm()}} or \code{\link[=FieldDictionary]{FieldDictionary()}}
+(those functions can use the metadata to fetch the schema when credentials
+are available).
+
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
+
+This function returns its result using \code{invisible()}. Assign it to a variable
+to inspect it.
 }
 \examples{
-#'#' \dontrun{ GetFormMetadata(form_id = form_id, api_key = api_key)}
-
-
+\dontrun{
+meta <- GetFormMetadata(form_id = "your-form-id", api_key = "your-api-key")
+meta$title
+str(meta$versions)
+}
 }

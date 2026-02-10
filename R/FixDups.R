@@ -7,6 +7,7 @@
 #' Shows a summary of problematic columns first, then asks the user one column
 #' at a time how to handle each one (concatenate, keep first, sum, count,
 #' remove the column entirely, etc.).
+#' If audit logging is active (see [StartAuditLog()]), this action is recorded.
 #'
 #' @param x List returned by [FlattenSubmissions()], must contain `$FlatResponses`
 #' @param multi_counts Optional. Output from [findMultilines()]. If `NULL`,
@@ -19,6 +20,15 @@
 #' @param quiet Logical. Suppress most messages and summaries? Default `FALSE`.
 #' @param dry_run Logical. If `TRUE`, shows what would happen without actually
 #'   modifying the data. Default `FALSE`.
+#' @param strategies Optional. A named character vector or a data frame with
+#'   columns `column` and `strategy`. When provided, FixDups can apply these
+#'   strategies without prompting (useful for repeatable workflows).
+#' @param prompt Logical. If `TRUE` (default), FixDups will prompt you for
+#'   choices when a strategy is not provided. If `FALSE`, it will not prompt
+#'   and will use `default_strategy` for any missing strategies.
+#' @param default_strategy Character. Strategy to use when `prompt = FALSE`
+#'   and a column needs fixing but no explicit strategy was provided.
+#'   Default `"concat_comma"`.
 #'
 #' @return A list with two components:
 #'   \describe{
@@ -59,8 +69,14 @@ FixDups <- function(
 		id_col = 1,
 		ask_threshold = 1.05,
 		quiet = FALSE,
-		dry_run = FALSE
+		dry_run = FALSE,
+		strategies = NULL,
+		prompt = TRUE,
+		default_strategy = "concat_comma"
 ) {
+	audit_depth <- audit_enter()
+	on.exit(audit_exit(), add = TRUE)
+	if (audit_depth == 1) maybe_prompt_audit_log()
 
 	# ------ Input checks ------------------------------------------------------------
 	if (!is.list(x) || !"FlatResponses" %in% names(x)) {
@@ -105,7 +121,40 @@ FixDups <- function(
 
 	if (nrow(max_per_col) == 0) {
 		if (!quiet) message("No columns need fixing - returning original data.")
-		return(list(cleaned = df, decisions = tibble(column = character(), strategy = character())))
+		out <- list(cleaned = df, decisions = tibble(column = character(), strategy = character()))
+		if (audit_depth == 1) {
+			maybe_write_audit("FixDups", details = "no changes", data = out$cleaned)
+		}
+		return(out)
+	}
+
+	# ---- Optional non-interactive strategies -----------------------------------
+	strategy_map <- character(0)
+	if (!is.null(strategies)) {
+		if (is.character(strategies) && !is.null(names(strategies))) {
+			strategy_map <- as.character(strategies)
+			names(strategy_map) <- names(strategies)
+		} else if (inherits(strategies, "data.frame") && all(c("column", "strategy") %in% names(strategies))) {
+			strategy_map <- as.character(strategies$strategy)
+			names(strategy_map) <- as.character(strategies$column)
+		}
+	}
+
+	allowed_strategies <- c(
+		"concat_comma",
+		"concat_semicolon",
+		"first",
+		"last",
+		"sum",
+		"mean",
+		"count_non_na",
+		"count_yes",
+		"skip",
+		"remove"
+	)
+	default_strategy <- as.character(default_strategy)[1]
+	if (!nzchar(default_strategy) || !default_strategy %in% allowed_strategies) {
+		default_strategy <- "concat_comma"
 	}
 
 	# -- Guided interactive loop -------------------------------------------------
@@ -123,20 +172,36 @@ FixDups <- function(
 		preview <- if (length(preview_vals) == 0) "- all missing -" else
 			paste0(paste(head(preview_vals, 4), collapse = ", "), if (length(preview_vals) > 4) ", ..." else "")
 
-		# Ask user
-		answer <- ask_strategy_for_column(
-			col_name   = col_name,
-			max_distinct = max_d,
-			preview    = preview,
-			col_data   = current_df[[col_name]]
-		)
-
-		if (identical(answer$action, "quit")) {
-			if (!quiet) message("Quitting early - returning data processed so far.")
-			break
+		# Determine strategy: prefer an explicit saved strategy, otherwise prompt,
+		# otherwise fall back to the default strategy.
+		strategy <- NA_character_
+		if (length(strategy_map) > 0 && !is.null(names(strategy_map)) && col_name %in% names(strategy_map)) {
+			strategy <- unname(strategy_map[[col_name]])
 		}
 
-		strategy <- answer$strategy
+		if (!is.na(strategy)) {
+			strategy <- as.character(strategy)[1]
+		} else if (isTRUE(prompt)) {
+			answer <- ask_strategy_for_column(
+				col_name   = col_name,
+				max_distinct = max_d,
+				preview    = preview,
+				col_data   = current_df[[col_name]]
+			)
+
+			if (identical(answer$action, "quit")) {
+				if (!quiet) message("Quitting early - returning data processed so far.")
+				break
+			}
+
+			strategy <- answer$strategy
+		} else {
+			strategy <- default_strategy
+		}
+
+		if (!nzchar(strategy) || !strategy %in% allowed_strategies) {
+			strategy <- default_strategy
+		}
 
 
 		# Record decision
@@ -182,10 +247,16 @@ FixDups <- function(
 		cat("Use result$cleaned to get the final table.\n\n")
 	}
 
-	list(
+	out <- list(
 		cleaned   = current_df,
 		decisions = decisions
 	)
+
+	if (audit_depth == 1) {
+		maybe_write_audit("FixDups", data = out$cleaned)
+	}
+
+	out
 }
 
 
@@ -440,7 +511,7 @@ clean_first <- function(data, col, id_col) {
 	data %>%
 		group_by(!!id_col) %>%
 		arrange(.data[[as.character(id_col)]]) %>%  # stable sort if needed
-		slice(1) %>%
+		dplyr::slice(1) %>%
 		ungroup()
 }
 
@@ -451,8 +522,8 @@ clean_last <- function(data, col, id_col) {
 
 	data %>%
 		group_by(!!id_col) %>%
-		arrange(desc(row_number())) %>%   # crude but works
-		slice(1) %>%
+		arrange(desc(dplyr::row_number())) %>%   # crude but works
+		dplyr::slice(1) %>%
 		ungroup()
 }
 
@@ -522,6 +593,3 @@ clean_count_yes <- function(data, col, id_col,
 		distinct() %>%
 		left_join(collapsed, by = as.character(ensym(id_col)))
 }
-
-
-

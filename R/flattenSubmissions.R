@@ -1,31 +1,42 @@
 
 
-#' Flatten Submissions
+#' Flatten nested FormIO submissions into a single table
 #'
-#' This function will flatten submissions coming from a FormIO list that has nested elements
-#' @param x list with responses, typically obtained through the GetResponses() function.
+#' FormIO submissions often contain nested lists (for repeating sections,
+#' address blocks, uploads, etc.). `FlattenSubmissions()` expands those nested
+#' structures into a regular 2D data frame so you can export and analyze the
+#' data more easily.
 #'
-#' @returns list with
-#'	* `FlatResponses` which is the entire dataset obtained from GetResponses() but, where all the nested lists are flattened into a bidimensional data frame. nested lists will take their name by using their parent name as a prefix, then a "-" separator, and then their own name.
-#'	* `ColumnNames` which is a data frame with column `Number` and column `Names`, listing all the newly created column names in `FlatResponses` and their numerical order. This output can then be passed to other FormIO functions for making easier to subset the dataset
+#' Nested columns are flattened using their parent name as a prefix, then a
+#' `"-"` separator, and then the nested field name.
+#' If audit logging is active (see [StartAuditLog()]), this action is recorded.
+#'
+#' @param x A data frame or list of submissions, typically returned by
+#'   [GetResponses()].
+#'
+#' @return A list with:
+#' \describe{
+#'   \item{FlatResponses}{A flattened data frame (one row per submission row in the source).}
+#'   \item{ColumnNames}{A data frame listing the new column names and their order.}
+#' }
+#'
 #' @export
-
+#'
 #' @examples
+#' x <- FoodTypes
 #'
-#' x<-FoodTypes
-#'
-#' # Nested Structure
-#' head(x)
-#'
-#' #Flattened Structure
-#' xFlat<-FlattenSubmissions(x)
-#'
-#' xFlat$FlatResponses ## Survey Output
-#' xFlat$ColumnNames   ## New Columns Formed
+#' # Flattened structure
+#' xFlat <- FlattenSubmissions(x)
+#' head(xFlat$FlatResponses)
+#' head(xFlat$ColumnNames)
 
 
 
 FlattenSubmissions <- function(x) {
+	audit_depth <- audit_enter()
+	on.exit(audit_exit(), add = TRUE)
+	if (audit_depth == 1) maybe_prompt_audit_log()
+
 	LineData<-list()
 	for(j in 1:nrow(x)){
 		RespondentLine <- x[j, ]
@@ -34,5 +45,11 @@ FlattenSubmissions <- function(x) {
 
 	Output<-dplyr::bind_rows(LineData)
 	ColumnNames<-data.frame(Number= 1:length(colnames(Output)), Name=  colnames(Output))
-	return(list(FlatResponses=Output, ColumnNames=ColumnNames))
+	out <- list(FlatResponses=Output, ColumnNames=ColumnNames)
+
+	if (audit_depth == 1) {
+		maybe_write_audit("FlattenSubmissions", data = out$FlatResponses)
+	}
+
+	return(out)
 }

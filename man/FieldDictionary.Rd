@@ -40,6 +40,7 @@ A data.frame with columns such as:
 \description{
 This creates a clean table that lists each field in your form. It is meant
 to be easy to read and share with non-technical staff.
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
 }
 \details{
 If you pass the output of \code{\link[=GetFormMetadata]{GetFormMetadata()}}, the schema is \strong{not} included

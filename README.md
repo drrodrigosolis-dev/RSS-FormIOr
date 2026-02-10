@@ -3,6 +3,17 @@
 Helper functions for downloading, flattening, cleaning, and simplifying FormIO submissions.
 This package is designed for non-technical users who want a clean, analysis-ready data table.
 
+Maintained by **Rodrigo Solis-Sosa, PhD** (Human Dimensions of Wildlife Specialist,
+BC Ministry of Water, Land and Resource Stewardship).
+
+FormIOr is designed for the Common Hosted Forms Service (CHEF) FormIO used by
+the BC Public Service. It may work with other FormIO services, but that is not
+guaranteed.
+
+**Default CHEF base URL:** `https://submit.digital.gov.bc.ca/app/api/v1`  
+If you use a different FormIO service, you must override `base_url` in
+`GetResponses()` / `GetSubmissions()`.
+
 ## Install
 
 ```r
@@ -31,6 +42,45 @@ compact <- CompactSelections(flat)                # combine checkbox columns
 
 dedup <- DeduplicateSubmissions(flat)             # remove duplicate submissions
 ```
+
+## Quick Start: Guided Wizard
+
+For most users, the easiest entry point is the guided workflow:
+
+```r
+out <- FormIOrWorkflow()
+```
+
+The wizard can:
+
+- Download responses (or start from an existing data frame)
+- Flatten nested columns
+- Apply cleaning steps (normalize names, deduplicate, resolve repeats, etc.)
+- Generate diagnostics (codebook + plots)
+- Export a multi-sheet Excel workbook (or CSV fallback)
+
+It also saves your wizard choices to `workflow_plan.rds/json` so you can repeat
+the same steps later.
+
+## Vignette
+
+See `inst/extdata/handbook/index.md` in this repo for a detailed end-to-end guide.
+
+If you have the package installed, you can locate the same guide with:
+
+```r
+system.file("extdata", "handbook/index.md", package = "FormIOr")
+```
+
+## Getting your API key and Form ID (CHEF)
+
+You can generate your API key in the **Manage** page of your form.  
+Your **Form ID** is the final alphanumeric code after the `=` sign in the
+Manage page URL.
+
+![CHEF API Key location](inst/extdata/handbook/assets/API.png)
+
+![CHEF Form ID location](inst/extdata/handbook/assets/FormID.png)
 
 ## Cleaning & Simplification Helpers
 
@@ -74,4 +124,5 @@ compact$summary
 - If you want the updated `FlattenSubmissions()` list in the output, pass
   `return_flat = TRUE` to any of the new cleaning functions.
 - Use `FixDups()` for a guided, interactive cleanup of multi-value fields.
-
+- To keep an audit trail of downloads/cleaning/exports, enable logging in the
+  wizard or call `StartAuditLog()` before running FormIOr functions.

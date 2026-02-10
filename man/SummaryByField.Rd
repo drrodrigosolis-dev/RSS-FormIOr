@@ -43,6 +43,7 @@ A list with:
 Designed for non-technical users: it accepts either a data frame or the list
 produced by \code{\link[=FlattenSubmissions]{FlattenSubmissions()}} and returns a simple summary. Numeric
 fields get descriptive statistics; categorical fields get counts and percents.
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
 }
 \examples{
 \dontrun{

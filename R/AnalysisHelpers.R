@@ -3,6 +3,7 @@
 #' Designed for non-technical users: it accepts either a data frame or the list
 #' produced by [FlattenSubmissions()] and returns a simple summary. Numeric
 #' fields get descriptive statistics; categorical fields get counts and percents.
+#' If audit logging is active (see [StartAuditLog()]), this action is recorded.
 #'
 #' @param x A data frame of responses, or a list from [FlattenSubmissions()].
 #' @param field Column name or number to summarize.
@@ -39,6 +40,10 @@ SummaryByField <- function(
 		digits = 2,
 		quiet = FALSE
 ) {
+	audit_depth <- audit_enter()
+	on.exit(audit_exit(), add = TRUE)
+	if (audit_depth == 1) maybe_prompt_audit_log()
+
 	df <- extract_flat_df(x)
 	field_name <- resolve_field_name(df, field)
 	values <- df[[field_name]]
@@ -137,6 +142,10 @@ SummaryByField <- function(
 		message("Summarized ", field_name, " (", type, ").")
 	}
 
+	if (audit_depth == 1) {
+		maybe_write_audit("SummaryByField", details = paste0("field=", field_name), data = df)
+	}
+
 	out
 }
 
@@ -145,6 +154,7 @@ SummaryByField <- function(
 #'
 #' Builds a simple cross-tabulation between two columns, returning both a
 #' wide table and a long table that includes counts and (optional) percents.
+#' If audit logging is active (see [StartAuditLog()]), this action is recorded.
 #'
 #' @param x A data frame of responses, or a list from [FlattenSubmissions()].
 #' @param row Column name or number for the rows.
@@ -179,6 +189,10 @@ CrossTab <- function(
 		digits = 1,
 		quiet = FALSE
 ) {
+	audit_depth <- audit_enter()
+	on.exit(audit_exit(), add = TRUE)
+	if (audit_depth == 1) maybe_prompt_audit_log()
+
 	percent <- match.arg(percent)
 
 	df <- extract_flat_df(x)
@@ -233,6 +247,14 @@ CrossTab <- function(
 		message("Cross-tabulated ", row_name, " by ", col_name, ".")
 	}
 
+	if (audit_depth == 1) {
+		maybe_write_audit(
+			"CrossTab",
+			details = paste0("row=", row_name, "; col=", col_name),
+			data = df
+		)
+	}
+
 	out
 }
 
@@ -242,6 +264,7 @@ CrossTab <- function(
 #' Counts responses per day/week/month (or hour), using a timestamp column.
 #' If `date_col` is `NULL`, the function tries common timestamp names
 #' automatically (e.g., `created`, `modified`, `_createdAt`).
+#' If audit logging is active (see [StartAuditLog()]), this action is recorded.
 #'
 #' @param x A data frame of responses, or a list from [FlattenSubmissions()].
 #' @param date_col Column name or number for the date/time field. If `NULL`,
@@ -275,6 +298,10 @@ ResponseTimeline <- function(
 		include_empty = TRUE,
 		quiet = FALSE
 ) {
+	audit_depth <- audit_enter()
+	on.exit(audit_exit(), add = TRUE)
+	if (audit_depth == 1) maybe_prompt_audit_log()
+
 	interval <- match.arg(interval)
 
 	df <- extract_flat_df(x)
@@ -354,11 +381,21 @@ ResponseTimeline <- function(
 		message("Built timeline for ", date_name, " (", interval, ").")
 	}
 
+	if (audit_depth == 1) {
+		maybe_write_audit(
+			"ResponseTimeline",
+			details = paste0("date_col=", date_name, "; interval=", interval),
+			data = df
+		)
+	}
+
 	out
 }
 
 
 #' Plot a histogram for a numeric field
+#'
+#' If audit logging is active (see [StartAuditLog()]), this action is recorded.
 #'
 #' @param x A data frame of responses, or a list from [FlattenSubmissions()].
 #' @param field Column name(s) or number(s) to plot. When multiple columns are
@@ -391,6 +428,10 @@ PlotHistogram <- function(
 		plot = TRUE,
 		...
 ) {
+	audit_depth <- audit_enter()
+	on.exit(audit_exit(), add = TRUE)
+	if (audit_depth == 1) maybe_prompt_audit_log()
+
 	df <- extract_flat_df(x)
 	field_name <- resolve_field_name(df, field)
 	values <- df[[field_name]]
@@ -416,11 +457,19 @@ PlotHistogram <- function(
 		...
 	)
 
-	invisible(list(field = field_name, hist = h))
+	out <- list(field = field_name, hist = h)
+
+	if (audit_depth == 1) {
+		maybe_write_audit("PlotHistogram", details = paste0("field=", field_name), data = df)
+	}
+
+	invisible(out)
 }
 
 
 #' Plot a bar chart for a categorical field
+#'
+#' If audit logging is active (see [StartAuditLog()]), this action is recorded.
 #'
 #' @param x A data frame of responses, or a list from [FlattenSubmissions()].
 #' @param field Column name or number to plot.
@@ -452,6 +501,10 @@ PlotBarSummary <- function(
 		plot = TRUE,
 		...
 ) {
+	audit_depth <- audit_enter()
+	on.exit(audit_exit(), add = TRUE)
+	if (audit_depth == 1) maybe_prompt_audit_log()
+
 	summary <- SummaryByField(
 		x = x,
 		field = field,
@@ -485,7 +538,13 @@ PlotBarSummary <- function(
 		)
 	}
 
-	invisible(list(field = summary$field, data = data))
+	out <- list(field = summary$field, data = data)
+
+	if (audit_depth == 1) {
+		maybe_write_audit("PlotBarSummary", details = paste0("field=", summary$field), data = x)
+	}
+
+	invisible(out)
 }
 
 
@@ -493,6 +552,7 @@ PlotBarSummary <- function(
 #'
 #' Requires the optional `wordcloud` package. If it is not installed, the
 #' function will stop with a helpful message.
+#' If audit logging is active (see [StartAuditLog()]), this action is recorded.
 #'
 #' @param x A data frame of responses, or a list from [FlattenSubmissions()].
 #' @param field Column name or number to plot.
@@ -524,6 +584,10 @@ PlotWordcloud <- function(
 		colors = NULL,
 		...
 ) {
+	audit_depth <- audit_enter()
+	on.exit(audit_exit(), add = TRUE)
+	if (audit_depth == 1) maybe_prompt_audit_log()
+
 	if (!requireNamespace("wordcloud", quietly = TRUE)) {
 		stop("Package 'wordcloud' is required. Install it with install.packages('wordcloud').")
 	}
@@ -557,7 +621,13 @@ PlotWordcloud <- function(
 		...
 	)
 
-	invisible(list(fields = field_names, freq = freq))
+	out <- list(fields = field_names, freq = freq)
+
+	if (audit_depth == 1) {
+		maybe_write_audit("PlotWordcloud", details = paste0("field=", paste(field_names, collapse = ", ")), data = df)
+	}
+
+	invisible(out)
 }
 
 
@@ -565,6 +635,7 @@ PlotWordcloud <- function(
 #'
 #' Convenience wrapper around [ResponseTimeline()] that draws a simple line
 #' chart using base graphics.
+#' If audit logging is active (see [StartAuditLog()]), this action is recorded.
 #'
 #' @param x A data frame of responses, or a list from [FlattenSubmissions()].
 #' @param date_col Column name or number for the date/time field. If `NULL`,
@@ -607,6 +678,10 @@ PlotResponseTimeline <- function(
 		plot = TRUE,
 		...
 ) {
+	audit_depth <- audit_enter()
+	on.exit(audit_exit(), add = TRUE)
+	if (audit_depth == 1) maybe_prompt_audit_log()
+
 	interval <- match.arg(interval)
 
 	out <- ResponseTimeline(
@@ -641,6 +716,10 @@ PlotResponseTimeline <- function(
 			ylab = ylab,
 			...
 		)
+	}
+
+	if (audit_depth == 1) {
+		maybe_write_audit("PlotResponseTimeline", details = paste0("interval=", interval), data = x)
 	}
 
 	invisible(out)

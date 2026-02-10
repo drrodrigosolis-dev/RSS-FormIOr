@@ -3,4 +3,13 @@
 ^FormIOr\.Rproj$
 ^LICENSE\.md$
 ^data-raw$
-^audit_log\.csv$
+audit_log\.csv$
+workflow_plan\.rds$
+workflow_plan\.json$
+^formior_.*$
+^.*\.Rcheck$
+^.*\.tar\.gz$
+^\\.DS_Store$
+^\\.Rhistory$
+^\\.git$
+^\\.gitignore$

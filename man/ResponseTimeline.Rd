@@ -44,6 +44,7 @@ A list with:
 Counts responses per day/week/month (or hour), using a timestamp column.
 If \code{date_col} is \code{NULL}, the function tries common timestamp names
 automatically (e.g., \code{created}, \code{modified}, \verb{_createdAt}).
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
 }
 \examples{
 \dontrun{

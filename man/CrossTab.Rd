@@ -43,6 +43,7 @@ A list with:
 \description{
 Builds a simple cross-tabulation between two columns, returning both a
 wide table and a long table that includes counts and (optional) percents.
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
 }
 \examples{
 \dontrun{

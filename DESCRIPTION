@@ -1,9 +1,16 @@
 Package: FormIOr
-Title: What the Package Does (One Line, Title Case)
+Title: Download, Clean, and Export FormIO Submissions
 Version: 0.0.0.9000
 Authors@R: 
     person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Author: First Last [aut, cre]
+Maintainer: First Last <first.last@example.com>
+Description: Tools for downloading FormIO submissions (responses), flattening
+    nested structures, cleaning and simplifying repeated and multi-select
+    answers, generating diagnostics (codebooks, summaries, plots), maintaining
+    audit logs of dataset processing, and exporting results to Excel or
+    delimited files. Includes an interactive end-to-end workflow for
+    non-technical users.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -25,5 +32,7 @@ Imports:
     utils
 Suggests:
     testthat (>= 3.0.0),
-    wordcloud
+    wordcloud,
+    openxlsx,
+    writexl
 Config/testthat/edition: 3

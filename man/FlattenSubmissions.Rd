@@ -2,33 +2,37 @@
 % Please edit documentation in R/flattenSubmissions.R
 \name{FlattenSubmissions}
 \alias{FlattenSubmissions}
-\title{Flatten Submissions}
+\title{Flatten nested FormIO submissions into a single table}
 \usage{
 FlattenSubmissions(x)
 }
 \arguments{
-\item{x}{list with responses, typically obtained through the GetResponses() function.}
+\item{x}{A data frame or list of submissions, typically returned by
+\code{\link[=GetResponses]{GetResponses()}}.}
 }
 \value{
-list with
-\itemize{
-\item \code{FlatResponses} which is the entire dataset obtained from GetResponses() but, where all the nested lists are flattened into a bidimensional data frame. nested lists will take their name by using their parent name as a prefix, then a "-" separator, and then their own name.
-\item \code{ColumnNames} which is a data frame with column \code{Number} and column \code{Names}, listing all the newly created column names in \code{FlatResponses} and their numerical order. This output can then be passed to other FormIO functions for making easier to subset the dataset
+A list with:
+\describe{
+\item{FlatResponses}{A flattened data frame (one row per submission row in the source).}
+\item{ColumnNames}{A data frame listing the new column names and their order.}
 }
 }
 \description{
-This function will flatten submissions coming from a FormIO list that has nested elements
+FormIO submissions often contain nested lists (for repeating sections,
+address blocks, uploads, etc.). \code{FlattenSubmissions()} expands those nested
+structures into a regular 2D data frame so you can export and analyze the
+data more easily.
+}
+\details{
+Nested columns are flattened using their parent name as a prefix, then a
+\code{"-"} separator, and then the nested field name.
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
 }
 \examples{
+x <- FoodTypes
 
-x<-FoodTypes
-
-# Nested Structure
-head(x)
-
-#Flattened Structure
-xFlat<-FlattenSubmissions(x)
-
-xFlat$FlatResponses ## Survey Output
-xFlat$ColumnNames   ## New Columns Formed
+# Flattened structure
+xFlat <- FlattenSubmissions(x)
+head(xFlat$FlatResponses)
+head(xFlat$ColumnNames)
 }

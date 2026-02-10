@@ -1,50 +1,86 @@
 
-#' Get Responses submitted to a FormIO Form
+
+#' Download responses from a FormIO form
 #'
-#' @param base_url URL where the form is stored. for the Gov't of BC, the URL is "https://submit.digital.gov.bc.ca/app/api/v1"(default)
-#' @param form_id if left  (Default), and credentials have not been entered, it will run AskCredentials() to obtain the information. You can find your Form's ID by going to your Form Settings page, and copying it from the URL (after the "=" sign in the URL)
-#' @param api_key if left  (Default), and credentials have not been entered, it will run AskCredentials() to obtain the information. You can generate an API for the specific form from the "Manage Form" page
-#' @param drafts Default FALSE, set to TRUE to download forms in draft
-#' @param deleted Default FALSE, set to TRUE to download deleted forms
-#' @param content.only Default TRUE. if F, returns a list with the submission data, content type, content disposition, and API status. If FALSE, it will only return the submission data as a data frame.
-#' @param reenter.credentials Default as FALSE. if TRUE, it will ask you to reenter the Form ID and API KEY, regardless if they already exist in the system
+#' Retrieves submissions ("responses") for a FormIO form using the export API.
+#' This is one of the main entry points for getting data into FormIOr.
 #'
-#' @returns if content.only= FALSE, returns a list with the submission data, content type, content disposition, and API status. IF False, it will only return the submission data as a data frame.
+#' Credentials:
+#' - If `form_id` and `api_key` are `NULL`, FormIOr will use previously entered
+#'   credentials from the current R session (stored internally), or prompt via
+#'   [AskCredentials()].
+#'
+#' Audit logging:
+#' - If audit logging is active (see [StartAuditLog()]), the download action is
+#'   recorded (but your API key is never written to the log).
+#'
+#' @section CHEF credentials and base URL:
+#' FormIOr is designed for the BC Public Service CHEF FormIO service.
+#' The default base URL is `https://submit.digital.gov.bc.ca/app/api/v1`.
+#' If you use a different FormIO service, you must override `base_url` and
+#' compatibility is not guaranteed.
+#'
+#' For CHEF users, generate your API key from the form's **Manage** page.
+#' The Form ID is the final alphanumeric code after the `=` sign in the
+#' Manage page URL.
+#'
+#' @param base_url Character. API base URL. Default:
+#'   `"https://submit.digital.gov.bc.ca/app/api/v1"`.
+#' @param form_id Character. Form ID. If `NULL`, uses stored credentials or
+#'   prompts via [AskCredentials()].
+#' @param api_key Character. API key/secret. If `NULL`, uses stored credentials
+#'   or prompts via [AskCredentials()].
+#' @param drafts Logical. Include draft submissions? Default `FALSE`.
+#' @param deleted Logical. Include deleted submissions? Default `FALSE`.
+#' @param content.only Logical or character.
+#'   - `TRUE` (default): return the submissions as a data frame/list
+#'   - `FALSE`: return a list with status, headers, and the parsed content
+#'   - `"raw"`: return the raw JSON response as text
+#' @param reenter.credentials Logical. Force re-entry of credentials (default:
+#'   `FALSE`).
+#'
+#' @return
+#' If `content.only = TRUE` (default), returns the parsed submissions
+#' (typically a data frame).
+#' If `content.only = FALSE`, returns a list with elements `status`,
+#' `content_type`, `content_disposition`, and `submission_data`.
+#' If `content.only = "raw"`, returns the raw JSON response as a character
+#' string.
+#'
 #' @export
 #'
 #' @examples
-#'#' \dontrun{ GetResponses(form_id = form_id, api_key = api_key, content.only = F)}
-#'
+#' \dontrun{
+#' responses <- GetResponses(form_id = "your-form-id", api_key = "your-api-key")
+#' flat <- FlattenSubmissions(responses)
+#' }
 
 GetResponses <- function(base_url = "https://submit.digital.gov.bc.ca/app/api/v1",
                          form_id= NULL,
                          api_key= NULL,
-                         drafts = F,
-                         deleted = F,
-                         content.only = T,
-                         reenter.credentials= F) {
+                         drafts = FALSE,
+                         deleted = FALSE,
+                         content.only = TRUE,
+                         reenter.credentials = FALSE) {
+  audit_depth <- audit_enter()
+  on.exit(audit_exit(), add = TRUE)
+  if (audit_depth == 1) maybe_prompt_audit_log()
 
-  if(reenter.credentials== T){
-    Form_Info <- c()
-    Form_Info<- AskCredentials()}
-  if(exists(".Form_Info")) {Form_Info <-  .Form_Info}
-  if(!exists(".Form_Info")){
-   Form_Info <- c()
-    Form_Info<- AskCredentials()}
-
-  .Form_Info<<-Form_Info
-
-
-  form_id<-   ifelse(is.null(form_id), Form_Info[1], form_id)
-  api_key<-   ifelse(is.null(api_key), Form_Info[2], api_key)
+  creds <- resolve_credentials(
+    form_id = form_id,
+    api_key = api_key,
+    reenter.credentials = reenter.credentials
+  )
+  form_id <- creds$form_id
+  api_key <- creds$api_key
 
   export_url <- paste0(base_url, "/forms/", form_id, "/export")
 
   query_params <- list(
     format = "json",
     type = "submissions",
-    drafts = ifelse(drafts == F, "false", "true"),
-    deleted = ifelse(deleted == F, "false", "true")
+    drafts = ifelse(isTRUE(drafts), "true", "false"),
+    deleted = ifelse(isTRUE(deleted), "true", "false")
   )
 
   # ---- Try request with x-token header (preferred) ----
@@ -66,7 +102,23 @@ GetResponses <- function(base_url = "https://submit.digital.gov.bc.ca/app/api/v1
 
   # ---- Return object to R environment ----
   # (submissions_data will be either the parsed JSON list/data.frame or NULL if a file was saved)
-  if (content.only == F) {return(full_submission_data)}
-  if (content.only == T){return(submission_data)}
-  if (content.only == 'raw'){return(content(resp, as = "text"))}
+  out <- NULL
+  if (isFALSE(content.only)) {out <- full_submission_data}
+  if (isTRUE(content.only)){out <- submission_data}
+  if (content.only == 'raw'){out <- content(resp, as = "text")}
+
+  if (audit_depth == 1) {
+    data_for_log <- NULL
+    if (is.data.frame(out)) data_for_log <- out
+    if (is.list(out) && !is.null(out$submission_data) && inherits(out$submission_data, "data.frame")) {
+      data_for_log <- out$submission_data
+    }
+    maybe_write_audit(
+      "GetResponses",
+      details = paste0("drafts=", drafts, "; deleted=", deleted),
+      data = data_for_log
+    )
+  }
+
+  return(out)
 }

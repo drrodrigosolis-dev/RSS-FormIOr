@@ -43,7 +43,7 @@ provided, their text is combined into one wordcloud.}
 Invisibly returns a list with the field name and histogram object.
 }
 \description{
-Plot a histogram for a numeric field
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
 }
 \examples{
 \dontrun{

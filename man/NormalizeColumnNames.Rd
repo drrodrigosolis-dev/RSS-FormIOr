@@ -41,6 +41,7 @@ A list with:
 Designed for non-technical users who want consistent column names after
 downloading FormIO submissions. Works with either a raw data frame or the
 list returned by \code{\link[=FlattenSubmissions]{FlattenSubmissions()}}.
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
 }
 \examples{
 \dontrun{

@@ -38,6 +38,7 @@ A list with:
 \description{
 This is a simple overview of a form: the name, version, and how many fields
 it contains. It is meant for non-technical users who want a quick summary.
+If audit logging is active (see \code{\link[=StartAuditLog]{StartAuditLog()}}), this action is recorded.
 }
 \details{
 What you can pass to \code{form}:
