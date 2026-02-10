@@ -11,8 +11,8 @@ Description: Tools for downloading FormIO submissions (responses), flattening
     delimited files. Includes an interactive end-to-end workflow for
     non-technical users.
 License: MIT + file LICENSE
-URL: https://github.com/ORG/FormIOr
-BugReports: https://github.com/ORG/FormIOr/issues
+URL: https://github.com/drrodrigosolis-dev/-RSS-FormIOr
+BugReports: https://github.com/drrodrigosolis-dev/-RSS-FormIOr/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
