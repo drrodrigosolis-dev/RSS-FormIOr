@@ -147,9 +147,9 @@ Note (CHEF): Response export endpoints use <code>/app/api/v1</code>, while some
 metadata/schema endpoints live at <code>/api/v1</code>. FormIOr automatically retries
 the alternate base for metadata/schema requests when needed.</li>
 <li><code>form_id</code>: Character. Form identifier. If <code>NULL</code>, uses stored credentials
-or prompts via <code>AskCredentials()</code>.</li>
+or prompts via <code>ask_credentials()</code>.</li>
 <li><code>api_key</code>: Character. API key / secret. If <code>NULL</code>, uses stored credentials
-or prompts via <code>AskCredentials()</code>.</li>
+or prompts via <code>ask_credentials()</code>.</li>
 <li><code>output_dir</code>: Folder to write output files into. If <code>NULL</code>, a new folder
 is created in the current working directory. When downloading from FormIO,
 the default folder name uses the form name (when available) plus a timestamp.</li>

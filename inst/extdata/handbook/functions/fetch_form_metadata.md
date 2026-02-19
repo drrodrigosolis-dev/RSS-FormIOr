@@ -33,8 +33,8 @@ fetch_form_metadata(
 - `base_url`: API base URL. Default `"https://submit.digital.gov.bc.ca/app/api/v1"`.
   For CHEF, metadata/schema endpoints may live at `/api/v1`; FormIOr will
   automatically retry the alternate base if needed.
-- `form_id`: Form ID. If `NULL`, credentials are read from `AskCredentials()`.
-- `api_key`: API key/secret. If `NULL`, credentials are read from `AskCredentials()`.
+- `form_id`: Form ID. If `NULL`, credentials are read from `ask_credentials()`.
+- `api_key`: API key/secret. If `NULL`, credentials are read from `ask_credentials()`.
 - `reenter.credentials`: Logical. If `TRUE`, forces re-entry of credentials.
 
 ## Outputs

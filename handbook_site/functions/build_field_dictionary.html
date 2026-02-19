@@ -152,7 +152,7 @@ per question.</li>
 <h2 id="sec:details-and-behavior">Details and behavior</h2>
 <p>If you pass the output of <code>fetch_form_metadata()</code>, the schema is <strong>not</strong> included
 in that object. In that case the function will automatically fetch the schema
-using stored credentials (from <code>AskCredentials()</code> or <code>fetch_form_metadata()</code>).
+using stored credentials (from <code>ask_credentials()</code> or <code>fetch_form_metadata()</code>).
 If credentials are not available, it will stop with a clear message.</p>
 <p>Note (CHEF): Some schema endpoints live at <code>/api/v1</code> while other endpoints
 (like exports) are under <code>/app/api/v1</code>. If a schema fetch fails at the

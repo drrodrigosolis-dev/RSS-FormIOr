@@ -44,9 +44,9 @@ run_form_processing_workflow(
   metadata/schema endpoints live at `/api/v1`. FormIOr automatically retries
   the alternate base for metadata/schema requests when needed.
 - `form_id`: Character. Form identifier. If `NULL`, uses stored credentials
-or prompts via `AskCredentials()`.
+or prompts via `ask_credentials()`.
 - `api_key`: Character. API key / secret. If `NULL`, uses stored credentials
-or prompts via `AskCredentials()`.
+or prompts via `ask_credentials()`.
 - `output_dir`: Folder to write output files into. If `NULL`, a new folder
 is created in the current working directory. When downloading from FormIO,
 the default folder name uses the form name (when available) plus a timestamp.

@@ -19,7 +19,7 @@
 3. **Removed interactive wrappers from examples**
    - Replaced interactive example guards with `\dontrun{}` in documentation where needed (including `assign_section_hierarchy`).
 4. **Console output made suppressible / interactive-only**
-   - `AskCredentials()` now explicitly requires interactive sessions.
+   - `ask_credentials()` now explicitly requires interactive sessions.
    - `rename_columns_from_dictionary()` and `resolve_duplicate_values()` now support non-interactive, suppressible workflows (`rename_map`, `strategies`, `prompt`, `quiet`).
    - Interactive prompts remain only in interactive code paths.
 5. **No default writes to home / working directory**

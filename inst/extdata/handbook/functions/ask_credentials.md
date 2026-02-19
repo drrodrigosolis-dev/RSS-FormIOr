@@ -1,4 +1,4 @@
-# AskCredentials
+# ask_credentials
 
 **Title:** Store FormIO credentials for the current R session
 
@@ -9,7 +9,7 @@ uses for API calls.
 
 ## Overview
 
-`AskCredentials()` now supports both interactive and non-interactive use:
+`ask_credentials()` now supports both interactive and non-interactive use:
 
 - If you provide both `form_id` and `api`/`api_key`, no prompt is shown.
 - If one value is missing, it prompts only for the missing one.
@@ -21,7 +21,7 @@ functions like `fetch_form_responses()`, `fetch_form_submissions()`, and `fetch_
 ## Usage
 
 ```r
-AskCredentials(form_id = NULL, api = NULL, api_key = NULL)
+ask_credentials(form_id = NULL, api = NULL, api_key = NULL)
 ```
 
 ## Key inputs
@@ -39,13 +39,13 @@ AskCredentials(form_id = NULL, api = NULL, api_key = NULL)
 
 ```r
 # Fully non-interactive (no prompts)
-AskCredentials(form_id = "myformID", api = "myapiToken")
+ask_credentials(form_id = "myformID", api = "myapiToken")
 
 # Also valid: use api_key
-AskCredentials(form_id = "myformID", api_key = "myapiToken")
+ask_credentials(form_id = "myformID", api_key = "myapiToken")
 
 # Interactive fallback (prompts only for missing value)
-AskCredentials(form_id = "myformID")
+ask_credentials(form_id = "myformID")
 ```
 
 ## Notes and tips

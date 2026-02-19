@@ -59,7 +59,7 @@ What you can pass to `form`:
 
 Important: `fetch_form_metadata()` returns **metadata only**, not the full form.
 If you pass metadata, this function will automatically fetch the form schema
-using stored credentials (from `AskCredentials()` or `fetch_form_metadata()`).
+using stored credentials (from `ask_credentials()` or `fetch_form_metadata()`).
 If credentials are not available, it will stop with a clear message.
 
 Note (CHEF): Some schema endpoints live at `/api/v1` while other endpoints

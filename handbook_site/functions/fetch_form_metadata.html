@@ -136,8 +136,8 @@ you, but the function is also safe to call directly in scripts.</p>
 <li><code>base_url</code>: API base URL. Default <code>&quot;https://submit.digital.gov.bc.ca/app/api/v1&quot;</code>.
 For CHEF, metadata/schema endpoints may live at <code>/api/v1</code>; FormIOr will
 automatically retry the alternate base if needed.</li>
-<li><code>form_id</code>: Form ID. If <code>NULL</code>, credentials are read from <code>AskCredentials()</code>.</li>
-<li><code>api_key</code>: API key/secret. If <code>NULL</code>, credentials are read from <code>AskCredentials()</code>.</li>
+<li><code>form_id</code>: Form ID. If <code>NULL</code>, credentials are read from <code>ask_credentials()</code>.</li>
+<li><code>api_key</code>: API key/secret. If <code>NULL</code>, credentials are read from <code>ask_credentials()</code>.</li>
 <li><code>reenter.credentials</code>: Logical. If <code>TRUE</code>, forces re-entry of credentials.</li>
 </ul>
 <h2 id="sec:outputs">Outputs</h2>

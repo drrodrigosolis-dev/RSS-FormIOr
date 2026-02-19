@@ -17,7 +17,7 @@ only and are not written to the audit log.
 You can also pre-load credentials explicitly to skip prompts:
 
 ```r
-AskCredentials(form_id = "your-form-id", api = "your-api-key")
+ask_credentials(form_id = "your-form-id", api = "your-api-key")
 responses <- fetch_form_responses()  # reuses cached credentials for this session
 ```
 

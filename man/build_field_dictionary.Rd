@@ -49,7 +49,7 @@ If audit logging is active (see \code{\link[=start_audit_log]{start_audit_log()}
 \details{
 If you pass the output of \code{\link[=fetch_form_metadata]{fetch_form_metadata()}}, the schema is \strong{not} included
 in that object. In that case the function will automatically fetch the schema
-using stored credentials (from \code{\link[=AskCredentials]{AskCredentials()}} or \code{fetch_form_metadata()}).
+using stored credentials (from \code{\link[=ask_credentials]{ask_credentials()}} or \code{fetch_form_metadata()}).
 If credentials are not available, it will stop with a clear message.
 
 Note (CHEF): Some schema endpoints live at \verb{/api/v1} while other endpoints

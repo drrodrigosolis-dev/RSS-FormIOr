@@ -80,5 +80,5 @@ head(compacted$data)
 Navigation
 - Home: [Handbook Index](../index.md)
 - Function Index: [All Functions](index.md)
-- Prev: [AskCredentials](AskCredentials.md)
+- Prev: [ask_credentials](ask_credentials.md)
 - Next: [Next Function](compare_form_versions.md)

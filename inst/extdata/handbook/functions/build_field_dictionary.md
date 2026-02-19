@@ -50,7 +50,7 @@ per question.
 
 If you pass the output of `fetch_form_metadata()`, the schema is **not** included
 in that object. In that case the function will automatically fetch the schema
-using stored credentials (from `AskCredentials()` or `fetch_form_metadata()`).
+using stored credentials (from `ask_credentials()` or `fetch_form_metadata()`).
 If credentials are not available, it will stop with a clear message.
 
 Note (CHEF): Some schema endpoints live at `/api/v1` while other endpoints

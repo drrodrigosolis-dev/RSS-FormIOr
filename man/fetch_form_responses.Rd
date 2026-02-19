@@ -19,10 +19,10 @@ fetch_form_responses(
 \code{"https://submit.digital.gov.bc.ca/app/api/v1"}.}
 
 \item{form_id}{Optional form ID. If \code{NULL}, uses cached credentials or
-prompts interactively via \code{\link[=AskCredentials]{AskCredentials()}}.}
+prompts interactively via \code{\link[=ask_credentials]{ask_credentials()}}.}
 
 \item{api_key}{Optional API key. If \code{NULL}, uses cached credentials or
-prompts interactively via \code{\link[=AskCredentials]{AskCredentials()}}.}
+prompts interactively via \code{\link[=ask_credentials]{ask_credentials()}}.}
 
 \item{drafts}{Logical. Include drafts. Default \code{FALSE}.}
 

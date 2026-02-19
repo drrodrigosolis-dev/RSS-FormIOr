@@ -143,9 +143,9 @@ Note (CHEF): Response export endpoints use <code>/app/api/v1</code>. Metadata/sc
 functions will automatically retry the alternate base (<code>/api/v1</code> &lt;-&gt; <code>/app/api/v1</code>)
 if needed.</li>
 <li><code>form_id</code>: Character. Form ID. If <code>NULL</code>, uses stored credentials or
-prompts via <code>AskCredentials()</code>.</li>
+prompts via <code>ask_credentials()</code>.</li>
 <li><code>api_key</code>: Character. API key/secret. If <code>NULL</code>, uses stored credentials
-or prompts via <code>AskCredentials()</code>.</li>
+or prompts via <code>ask_credentials()</code>.</li>
 <li><code>drafts</code>: Logical. Include draft submissions? Default <code>FALSE</code>.</li>
 <li><code>deleted</code>: Logical. Include deleted submissions? Default <code>FALSE</code>.</li>
 <li><code>content.only</code>: Logical or character.</li>
@@ -164,7 +164,7 @@ or prompts via <code>AskCredentials()</code>.</li>
 <ul>
 <li>If <code>form_id</code> and <code>api_key</code> are <code>NULL</code>, FormIOr will use previously entered
 credentials from the current R session (stored internally), or prompt via
-<code>AskCredentials()</code>.</li>
+<code>ask_credentials()</code>.</li>
 </ul>
 <p>Audit logging:</p>
 <ul>

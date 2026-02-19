@@ -6,9 +6,9 @@
 #' @param base_url Character API base URL. Default:
 #'   `"https://submit.digital.gov.bc.ca/app/api/v1"`.
 #' @param form_id Optional form ID. If `NULL`, uses cached credentials or
-#'   prompts interactively via [AskCredentials()].
+#'   prompts interactively via [ask_credentials()].
 #' @param api_key Optional API key. If `NULL`, uses cached credentials or
-#'   prompts interactively via [AskCredentials()].
+#'   prompts interactively via [ask_credentials()].
 #' @param content.only Logical or character.
 #'   - `TRUE` (default): return cleaned metadata data frame
 #'   - `FALSE`: return full response list (status, headers, parsed data)

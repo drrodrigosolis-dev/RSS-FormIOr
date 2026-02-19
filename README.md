@@ -31,11 +31,11 @@ install.packages("/path/to/FormIOr", repos = NULL, type = "source")
 library(FormIOr)
 
 # Optional: cache credentials once per R session (skips prompts)
-AskCredentials(form_id = "your-form-id", api = "your-api-key")
+ask_credentials(form_id = "your-form-id", api = "your-api-key")
 
 # 1) Download responses
 responses <- fetch_form_responses(form_id = "your-form-id", api_key = "your-api-key")
-# or: responses <- fetch_form_responses()  # if already cached with AskCredentials()
+# or: responses <- fetch_form_responses()  # if already cached with ask_credentials()
 
 # 2) Flatten nested submissions
 flat <- flatten_submission_records(responses)

@@ -23,10 +23,10 @@ run_form_processing_workflow(
 \code{"https://submit.digital.gov.bc.ca/app/api/v1"}.}
 
 \item{form_id}{Character. Form identifier. If \code{NULL}, uses stored credentials
-or prompts via \code{\link[=AskCredentials]{AskCredentials()}}.}
+or prompts via \code{\link[=ask_credentials]{ask_credentials()}}.}
 
 \item{api_key}{Character. API key / secret. If \code{NULL}, uses stored credentials
-or prompts via \code{\link[=AskCredentials]{AskCredentials()}}.}
+or prompts via \code{\link[=ask_credentials]{ask_credentials()}}.}
 
 \item{output_dir}{Folder to write output files into. If \code{NULL}, a new folder
 is created under \code{tempdir()} (or you will be prompted to choose). When

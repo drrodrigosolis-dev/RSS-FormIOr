@@ -21,7 +21,7 @@ when needed.
 Credential shortcut (skip prompts):
 
     # Store credentials once for this R session (non-interactive)
-    AskCredentials(form_id = "YOUR_FORM_ID", api = "YOUR_API_KEY")
+    ask_credentials(form_id = "YOUR_FORM_ID", api = "YOUR_API_KEY")
 
     # You can then call API functions without repeating credentials each time
     # raw <- fetch_form_responses()
@@ -31,7 +31,7 @@ Credential shortcut (skip prompts):
 <!-- -->
 
     raw <- fetch_form_responses(form_id = "YOUR_FORM_ID", api_key = "YOUR_API_KEY")
-    # or, if already cached with AskCredentials():
+    # or, if already cached with ask_credentials():
     # raw <- fetch_form_responses()
 
 Tip: Many cleaning helpers return a list with `out$data` (the cleaned

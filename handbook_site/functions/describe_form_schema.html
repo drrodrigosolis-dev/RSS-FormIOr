@@ -162,7 +162,7 @@ only (<code>&quot;input&quot;</code>). Use <code>&quot;all&quot;</code> to inclu
 </ul>
 <p>Important: <code>fetch_form_metadata()</code> returns <strong>metadata only</strong>, not the full form.
 If you pass metadata, this function will automatically fetch the form schema
-using stored credentials (from <code>AskCredentials()</code> or <code>fetch_form_metadata()</code>).
+using stored credentials (from <code>ask_credentials()</code> or <code>fetch_form_metadata()</code>).
 If credentials are not available, it will stop with a clear message.</p>
 <p>Note (CHEF): Some schema endpoints live at <code>/api/v1</code> while other endpoints
 (like exports) are under <code>/app/api/v1</code>. If a schema fetch fails at the

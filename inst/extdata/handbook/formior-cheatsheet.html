@@ -370,7 +370,7 @@ URL.</p>
 base for metadata/schema requests when needed.</p>
 <p>Credential shortcut (skip prompts):</p>
 <pre class="r"><code># Store credentials once for this R session (non-interactive)
-AskCredentials(form_id = &quot;YOUR_FORM_ID&quot;, api = &quot;YOUR_API_KEY&quot;)
+ask_credentials(form_id = &quot;YOUR_FORM_ID&quot;, api = &quot;YOUR_API_KEY&quot;)
 
 # You can then call API functions without repeating credentials each time
 # raw &lt;- fetch_form_responses()</code></pre>
@@ -378,7 +378,7 @@ AskCredentials(form_id = &quot;YOUR_FORM_ID&quot;, api = &quot;YOUR_API_KEY&quot
 <li><strong>Download responses</strong></li>
 </ol>
 <pre class="r"><code>raw &lt;- fetch_form_responses(form_id = &quot;YOUR_FORM_ID&quot;, api_key = &quot;YOUR_API_KEY&quot;)
-# or, if already cached with AskCredentials():
+# or, if already cached with ask_credentials():
 # raw &lt;- fetch_form_responses()</code></pre>
 <p>Tip: Many cleaning helpers return a list with <code>out$data</code>
 (the cleaned <code>data.frame</code>) and, when

@@ -9,7 +9,7 @@ notes, and examples.
 
 - [assign_section_hierarchy](assign_section_hierarchy.md)
 - [apply_submission_updates](apply_submission_updates.md)
-- [AskCredentials](AskCredentials.md)
+- [ask_credentials](ask_credentials.md)
 - [collapse_checkbox_selections](collapse_checkbox_selections.md)
 - [compare_form_versions](compare_form_versions.md)
 - [tabulate_field_by_group](tabulate_field_by_group.md)

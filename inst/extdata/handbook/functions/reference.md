@@ -7,7 +7,7 @@ Click a function name to open its full handbook page.
 | --- | --- |
 | [append_audit_log_entry](append_audit_log_entry.md) | This writes a small CSV/TSV log of key actions (e.g., downloads, cleaning, exports). It is designed to be easy for non-technical users to open in Excel. If you are using automatic logging, you gene... |
 | [apply_submission_updates](apply_submission_updates.md) | Sometimes you need to make small, targeted fixes before you export: remove test submissions, correct a value for one submission, or blank out a field for privacy reasons. |
-| [AskCredentials](AskCredentials.md) | Collects the Form ID and API key and caches them for this R session. |
+| [ask_credentials](ask_credentials.md) | Collects the Form ID and API key and caches them for this R session. |
 | [assign_section_hierarchy](assign_section_hierarchy.md) | Assigns hierarchical section labels to columns in flattened FormIO response data (up to 3 levels deep). You can run it interactively with prompts, or non-interactively by supplying depth, section_n... |
 | [build_data_codebook](build_data_codebook.md) | This produces a plain-language table that documents each column in your data. It can optionally use a FormIO schema (via build_field_dictionary()) to add labels, sections, and descriptions. If audi... |
 | [build_field_dictionary](build_field_dictionary.md) | This creates a clean table that lists each field in your form. It is meant to be easy to read and share with non-technical staff. If audit logging is active (see start_audit_log()), this action is ... |

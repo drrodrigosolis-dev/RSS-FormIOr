@@ -15,10 +15,10 @@
 #'
 #' @examples
 #' \dontrun{
-#' AskCredentials()
-#' AskCredentials(form_id = "myformID", api = "myapiToken")
+#' ask_credentials()
+#' ask_credentials(form_id = "myformID", api = "myapiToken")
 #' }
-AskCredentials <- function(form_id = NULL, api = NULL, api_key = NULL) {
+ask_credentials <- function(form_id = NULL, api = NULL, api_key = NULL) {
   normalize_value <- function(x) {
     if (is.null(x) || length(x) == 0) return(NULL)
     value <- trimws(as.character(x[[1]]))
@@ -40,7 +40,7 @@ AskCredentials <- function(form_id = NULL, api = NULL, api_key = NULL) {
   }
 
   if ((is.null(form_id) || is.null(resolved_api)) && !interactive()) {
-    stop("AskCredentials() needs form_id and api/api_key in non-interactive sessions.")
+    stop("ask_credentials() needs form_id and api/api_key in non-interactive sessions.")
   }
 
   if (is.null(form_id)) {

@@ -12,7 +12,7 @@
 #'
 #' Important: [fetch_form_metadata()] returns **metadata only**, not the full form.
 #' If you pass metadata, this function will automatically fetch the form schema
-#' using stored credentials (from [AskCredentials()] or `fetch_form_metadata()`).
+#' using stored credentials (from [ask_credentials()] or `fetch_form_metadata()`).
 #' If credentials are not available, it will stop with a clear message.
 #'
 #' Note (CHEF): Some schema endpoints live at `/api/v1` while other endpoints
@@ -127,7 +127,7 @@ describe_form_schema <- function(
 #'
 #' If you pass the output of [fetch_form_metadata()], the schema is **not** included
 #' in that object. In that case the function will automatically fetch the schema
-#' using stored credentials (from [AskCredentials()] or `fetch_form_metadata()`).
+#' using stored credentials (from [ask_credentials()] or `fetch_form_metadata()`).
 #' If credentials are not available, it will stop with a clear message.
 #'
 #' Note (CHEF): Some schema endpoints live at `/api/v1` while other endpoints
@@ -230,7 +230,7 @@ build_field_dictionary <- function(
 #'
 #' If you pass the output of [fetch_form_metadata()], the schema is **not** included
 #' in that object. In that case the function will automatically fetch the schema
-#' using stored credentials (from [AskCredentials()] or `fetch_form_metadata()`). If
+#' using stored credentials (from [ask_credentials()] or `fetch_form_metadata()`). If
 #' credentials are not available, it will stop with a clear message.
 #'
 #' Tip: Use `by = "key"` for stable field keys, or `by = "path"` when keys are
@@ -979,11 +979,11 @@ resolve_credentials <- function(form_id = NULL, api_key = NULL, reenter.credenti
 		nzchar(as.character(stored[[2]]))
 
 	if (reenter.credentials) {
-		Form_Info <- AskCredentials(form_id = form_id, api_key = api_key) # Force re-entry for missing values only.
+		Form_Info <- ask_credentials(form_id = form_id, api_key = api_key) # Force re-entry for missing values only.
 	} else if (has_stored) {
 		Form_Info <- stored # Use cached credentials.
 	} else if (interactive() && (is.null(form_id) || is.null(api_key) || !nzchar(form_id) || !nzchar(api_key))) {
-		Form_Info <- AskCredentials(form_id = form_id, api_key = api_key) # Prompt for missing values.
+		Form_Info <- ask_credentials(form_id = form_id, api_key = api_key) # Prompt for missing values.
 	}
 
 	if ((is.null(form_id) || !nzchar(form_id)) && !is.null(Form_Info)) {
@@ -994,7 +994,7 @@ resolve_credentials <- function(form_id = NULL, api_key = NULL, reenter.credenti
 	}
 
 	if (is.null(form_id) || is.null(api_key) || !nzchar(form_id) || !nzchar(api_key)) {
-		stop("Form ID or API key not available. Run AskCredentials() or pass form_id and api_key.")
+		stop("Form ID or API key not available. Run ask_credentials() or pass form_id and api_key.")
 	}
 
 	# Store the resolved credentials for the current R session so subsequent calls

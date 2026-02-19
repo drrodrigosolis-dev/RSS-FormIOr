@@ -53,9 +53,9 @@
 #' @param base_url Character. API base URL. Default:
 #'   `"https://submit.digital.gov.bc.ca/app/api/v1"`.
 #' @param form_id Character. Form identifier. If `NULL`, uses stored credentials
-#'   or prompts via [AskCredentials()].
+#'   or prompts via [ask_credentials()].
 #' @param api_key Character. API key / secret. If `NULL`, uses stored credentials
-#'   or prompts via [AskCredentials()].
+#'   or prompts via [ask_credentials()].
 #' @param output_dir Folder to write output files into. If `NULL`, a new folder
 #'   is created under `tempdir()` (or you will be prompted to choose). When
 #'   downloading from FormIO, the default folder name uses the form name (when

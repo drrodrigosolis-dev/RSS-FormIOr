@@ -40,9 +40,9 @@ fetch_form_responses(
   functions will automatically retry the alternate base (`/api/v1` <-> `/app/api/v1`)
   if needed.
 - `form_id`: Character. Form ID. If `NULL`, uses stored credentials or
-prompts via `AskCredentials()`.
+prompts via `ask_credentials()`.
 - `api_key`: Character. API key/secret. If `NULL`, uses stored credentials
-or prompts via `AskCredentials()`.
+or prompts via `ask_credentials()`.
 - `drafts`: Logical. Include draft submissions? Default `FALSE`.
 - `deleted`: Logical. Include deleted submissions? Default `FALSE`.
 - `content.only`: Logical or character.
@@ -61,7 +61,7 @@ or prompts via `AskCredentials()`.
 Credentials:
 - If `form_id` and `api_key` are `NULL`, FormIOr will use previously entered
 credentials from the current R session (stored internally), or prompt via
-`AskCredentials()`.
+`ask_credentials()`.
 
 Audit logging:
 - If audit logging is active (see `start_audit_log()`), the download action is

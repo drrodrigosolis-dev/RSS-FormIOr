@@ -51,7 +51,7 @@ What you can pass to \code{form}:
 
 Important: \code{\link[=fetch_form_metadata]{fetch_form_metadata()}} returns \strong{metadata only}, not the full form.
 If you pass metadata, this function will automatically fetch the form schema
-using stored credentials (from \code{\link[=AskCredentials]{AskCredentials()}} or \code{fetch_form_metadata()}).
+using stored credentials (from \code{\link[=ask_credentials]{ask_credentials()}} or \code{fetch_form_metadata()}).
 If credentials are not available, it will stop with a clear message.
 
 Note (CHEF): Some schema endpoints live at \verb{/api/v1} while other endpoints
